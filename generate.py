@@ -7,7 +7,7 @@ Data source: English Wikipedia wikitext via the MediaWiki API.
 import json, re, sys, datetime, urllib.request, os
 from zoneinfo import ZoneInfo
 
-OUTDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "calendar")
+OUTDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
 os.makedirs(OUTDIR, exist_ok=True)
 IST = ZoneInfo("Europe/Istanbul")
 UA = "Mozilla/5.0 (compatible; fiba2027-calendar-bot/1.0; +https://github.com/selim-nba/fiba2027-calendar)"
