@@ -216,29 +216,59 @@ def build_ics(matches, path, calname, caldesc):
         f.write("\r\n".join(L) + "\r\n")
     return uc
 
+def fetch_wt(title, attempts=2):
+    """Fetch Wikipedia wikitext with a tiny retry. Returns (ok, text)."""
+    last = None
+    for a in range(attempts):
+        try:
+            return True, wiki_wikitext(title)
+        except Exception as e:  # network / HTTP / JSON errors
+            last = e
+            print(f"  !! fetch attempt {a+1} failed for {title!r}: {e}", file=sys.stderr)
+    return False, ""
+
+def write_if_better(path, matches, calname, caldesc):
+    """Write ICS only when we have real data; never wipe a good file on a bad fetch.
+
+    Policy: overwrite when the new calendar has events, OR when no prior file exists.
+    A transient empty/failed result keeps the last known-good file so subscribers
+    never lose their calendar because Wikipedia was briefly unavailable.
+    """
+    if not matches:
+        if os.path.exists(path):
+            print(f"  ~ kept existing {os.path.basename(path)} (no new matches; preserving last-good file)")
+            return 0
+        # first run with legitimately 0 events (e.g. WC fixtures not published yet)
+    return build_ics(matches, path, calname, caldesc)
+
 def main():
-    print("Fetching European qualifiers article ...")
-    eq = wiki_wikitext("2027 FIBA Basketball World Cup qualification (Europe)")
-    eqm = parse_blocks(eq)
+    eq_ok, eq = fetch_wt("2027 FIBA Basketball World Cup qualification (Europe)")
+    eqm = parse_blocks(eq) if eq_ok else []
     tur_eq = [m for m in eqm if m["id"] and "Turkey" in m["id"]]
 
-    print("Fetching World Cup tournament article ...")
-    wc = wiki_wikitext("2027 FIBA Basketball World Cup")
-    wcm = parse_blocks(wc)
+    wc_ok, wc = fetch_wt("2027 FIBA Basketball World Cup")
+    wcm = parse_blocks(wc) if wc_ok else []
     tur_wc = [m for m in wcm if m["id"] and "Turkey" in m["id"]]
 
-    # Single Türkiye calendar: qualifiers + World Cup (when fixtures are published)
+    # Single Türkiye calendar: qualifiers + World Cup (when fixtures are published).
+    # WC is best-effort: a transient WC fetch failure must not drop qualifier matches.
     turkiye = sorted(tur_eq + tur_wc, key=lambda m: (parse_date(m["date"]) or datetime.date.max, m["id"]))
-    n1 = build_ics(turkiye, os.path.join(OUTDIR, "turkiye.ics"),
-                   "FIBA 2027 - Türkiye A Milli Takımı",
-                   "FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)")
-    print(f"  turkiye.ics: {n1} events (elemeler: {len(tur_eq)}, dünya kupası: {len(tur_wc)})")
+    if eq_ok or tur_wc:
+        n1 = write_if_better(os.path.join(OUTDIR, "turkiye.ics"), turkiye,
+                             "FIBA 2027 - Türkiye A Milli Takımı",
+                             "FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)")
+        print(f"  turkiye.ics: {n1} events (elemeler: {len(tur_eq)}, dünya kupası: {len(tur_wc)})")
+    else:
+        print("  ~ turkiye.ics: both fetches failed; kept last-good file")
 
     # Bonus: full World Cup tournament calendar (all teams)
-    n2 = build_ics(wcm, os.path.join(OUTDIR, "worldcup.ics"),
-                   "FIBA 2027 Dünya Kupası",
-                   "FIBA Basketbol 2027 Dünya Kupası - tüm turnuva maçları (otomatik güncellenir)")
-    print(f"  worldcup.ics: {n2} events")
+    if wc_ok:
+        n2 = write_if_better(os.path.join(OUTDIR, "worldcup.ics"), wcm,
+                             "FIBA 2027 Dünya Kupası",
+                             "FIBA Basketbol 2027 Dünya Kupası - tüm turnuva maçları (otomatik güncellenir)")
+        print(f"  worldcup.ics: {n2} events")
+    else:
+        print("  ~ worldcup.ics: fetch failed; kept last-good file")
 
     # Landing page (static, self-contained; JS reads turkiye.ics to show next match)
     html = r"""<!doctype html>
