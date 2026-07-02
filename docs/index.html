@@ -44,6 +44,10 @@
   .credit a:hover{border-color:var(--red);color:var(--red)}
   .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
   a{color:var(--red)}
+  .share{margin-top:14px;border:1px solid var(--red);background:var(--red);color:#fff;
+         border-radius:8px;padding:10px 16px;font-size:15px;font-weight:600;cursor:pointer}
+  .share:hover{background:#c00814}
+  .share.copied{background:#2e7d32;border-color:#2e7d32}
   @media(max-width:520px){.urlrow{flex-direction:column;align-items:stretch}code{font-size:12px}}
 </style>
 </head>
@@ -53,6 +57,7 @@
     <div class="flag">🇹🇷</div>
     <h1>FIBA 2027 — Türkiye A Milli Takımı</h1>
     <p class="sub">Avrupa Elemeleri + Dünya Kupası · takvimden takip</p>
+  <button class="share" id="shareBtn">🔗 Arkadaşlarınla paylaş</button>
   </header>
 
   <p class="hype">12 Dev Adam'a giden yolda hiçbir maçı kaçırma. 🇹🇷
@@ -131,6 +136,23 @@ function wireCal(n, file){
 }
 wireCal(1, "turkiye.ics");
 wireCal(2, "worldcup.ics");
+
+const shareBtn = document.getElementById("shareBtn");
+const shareData = {
+  title: "FIBA 2027 — Türkiye A Milli Takımı Takvimi",
+  text: "2027 Avrupa Elemeleri + Dünya Kupası maçlarını takviminden takip et 🇹🇷",
+  url: location.href
+};
+function shareDone(msg){ shareBtn.textContent = msg; shareBtn.classList.add("copied");
+  setTimeout(()=>{ shareBtn.textContent="🔗 Arkadaşlarınla paylaş"; shareBtn.classList.remove("copied"); },1800); }
+shareBtn.addEventListener("click", async () => {
+  if (navigator.share) {
+    try { await navigator.share(shareData); } catch (e) { /* user cancelled */ }
+  } else {
+    try { await navigator.clipboard.writeText(location.href); shareDone("Link kopyalandı ✓"); }
+    catch (e) { window.prompt("Bu linki kopyala:", location.href); }
+  }
+});
 
 function copy(id, btn){
   navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
