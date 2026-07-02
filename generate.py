@@ -286,6 +286,7 @@ def main():
   header h1{font-size:clamp(26px,5vw,38px);margin:8px 0 2px;letter-spacing:-.5px}
   header .flag{font-size:clamp(40px,9vw,64px);line-height:1}
   .sub{color:var(--muted);margin:0 0 4px}
+  .toprow{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .hype{font-size:18px;font-weight:600;margin:18px 0 6px}
   .hype small{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:4px}
   .next{border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;
@@ -417,7 +418,7 @@ const shareData = {
   url: location.href
 };
 function shareDone(msg){ shareBtn.textContent = msg; shareBtn.classList.add("copied");
-  setTimeout(()=>{ shareBtn.textContent="🔗 Arkadaşlarınla paylaş"; shareBtn.classList.remove("copied"); },1800); }
+  setTimeout(()=>{ shareBtn.textContent="Paylaş"; shareBtn.classList.remove("copied"); },1800); }
 shareBtn.addEventListener("click", async () => {
   if (navigator.share) {
     try { await navigator.share(shareData); } catch (e) { /* user cancelled */ }
