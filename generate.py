@@ -187,18 +187,24 @@ def main():
     print("Fetching European qualifiers article ...")
     eq = wiki_wikitext("2027 FIBA Basketball World Cup qualification (Europe)")
     eqm = parse_blocks(eq)
-    tur = [m for m in eqm if m["id"] and "Turkey" in m["id"]]
-    n1 = build_ics(tur, os.path.join(OUTDIR, "turkiye.ics"),
-                   "FIBA 2027 Elemeler - Türkiye",
-                   "FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)")
-    print(f"  turkiye.ics: {n1} events (from {len(eqm)} total qualifier matches)")
+    tur_eq = [m for m in eqm if m["id"] and "Turkey" in m["id"]]
 
     print("Fetching World Cup tournament article ...")
     wc = wiki_wikitext("2027 FIBA Basketball World Cup")
     wcm = parse_blocks(wc)
+    tur_wc = [m for m in wcm if m["id"] and "Turkey" in m["id"]]
+
+    # Single Türkiye calendar: qualifiers + World Cup (when fixtures are published)
+    turkiye = sorted(tur_eq + tur_wc, key=lambda m: (parse_date(m["date"]) or datetime.date.max, m["id"]))
+    n1 = build_ics(turkiye, os.path.join(OUTDIR, "turkiye.ics"),
+                   "FIBA 2027 - Türkiye A Milli Takımı",
+                   "FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)")
+    print(f"  turkiye.ics: {n1} events (elemeler: {len(tur_eq)}, dünya kupası: {len(tur_wc)})")
+
+    # Bonus: full World Cup tournament calendar (all teams)
     n2 = build_ics(wcm, os.path.join(OUTDIR, "worldcup.ics"),
                    "FIBA 2027 Dünya Kupası",
-                   "FIBA Basketbol 2027 Dünya Kupası - turnuva maçları (otomatik güncellenir)")
+                   "FIBA Basketbol 2027 Dünya Kupası - tüm turnuva maçları (otomatik güncellenir)")
     print(f"  worldcup.ics: {n2} events")
 
     # combined index for humans
@@ -207,8 +213,8 @@ def main():
                 "<body style='font:16px system-ui;max-width:680px;margin:2rem auto;line-height:1.6'>"
                 "<h1>FIBA 2027 Takvim Aboneliği</h1>"
                 "<p>Google Calendar → Dişli → Ayarlar → Takvim ekle → URL ile → aşağıdaki adresi yapıştır.</p>"
-                "<p><b>Türkiye (elemeler):</b><br><code id=u1></code></p>"
-                "<p><b>Dünya Kupası (turnuva):</b><br><code id=u2></code></p>"
+                "<p><b>Türkiye (elemeler + Dünya Kupası):</b><br><code id=u1></code></p>"
+                "<p><b>Dünya Kupası (tüm maçlar):</b><br><code id=u2></code></p>"
                 "<script>var b=location.origin+location.pathname.replace(/index.html$/, '');"
                 "document.getElementById('u1').textContent=b+'turkiye.ics';"
                 "document.getElementById('u2').textContent=b+'worldcup.ics';</script>"

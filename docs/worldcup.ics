@@ -5,5 +5,5 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 X-WR-CALNAME:FIBA 2027 Dünya Kupası
 X-WR-TIMEZONE:Europe/Istanbul
-X-WR-CALDESC:FIBA Basketbol 2027 Dünya Kupası - turnuva maçları (otomatik güncellenir)
+X-WR-CALDESC:FIBA Basketbol 2027 Dünya Kupası - tüm turnuva maçları (otomatik güncellenir)
 END:VCALENDAR

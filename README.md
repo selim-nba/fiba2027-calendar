@@ -8,7 +8,7 @@ sen bir şey yapmazsın, abone olduğun takvim Google Calendar'da otomatik yenil
 
 | Takvim | İçerik |
 |---|---|
-| `turkiye.ics` | Türkiye A Milli Takımı'nın 2027 Dünya Kupası Avrupa Elemeleri maçları |
+| `turkiye.ics` | Türkiye A Milli Takımı'nın **tüm** maçları: Avrupa Elemeleri + Dünya Kupası (fikstür yayınlandıkça) |
 | `worldcup.ics` | 2027 FIBA Dünya Kupası turnuva maçları (fikstür yayınlandıkça dolar) |
 
 ## Google Calendar'a abone ol
