@@ -132,9 +132,15 @@ document.getElementById("u2").textContent = base + "worldcup.ics";
 function wireCal(n, file){
   const https = base + file;
   const webcal = https.replace(/^https?:\/\//, "webcal://");
+  // Google: subscribe via webcal URL (https cid is rejected by Google).
   document.getElementById("g"+n).href = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(webcal);
+  // Apple Calendar: native webcal:// handler subscribes & auto-updates.
   document.getElementById("a"+n).href = webcal;
-  document.getElementById("o"+n).href = webcal;
+  // Outlook (web): add-calendar-from-web deeplink with the https URL. Works in
+  // outlook.live.com / Microsoft 365 web when logged in; Outlook desktop also registers webcal://.
+  document.getElementById("o"+n).href =
+    "https://outlook.live.com/calendar/0/deeplink/addcalendar?path=/calendar/action/addcalendar&url=" + encodeURIComponent(https);
+  // Universal fallback: download the .ics (one-time import, does NOT auto-update).
   document.getElementById("d"+n).href = https;
 }
 wireCal(1, "turkiye.ics");
