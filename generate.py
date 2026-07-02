@@ -1,259 +1,224 @@
 #!/usr/bin/env python3
-"""Generate ICS calendars for FIBA 2027 World Cup from Wikipedia (auto-updating).
-- calendar/turkiye.ics : Türkiye matches in European qualifiers (+ World Cup once Türkiye fixtures known)
-- calendar/worldcup.ics: all 2027 FIBA Basketball World Cup tournament matches
-Data source: English Wikipedia wikitext via the MediaWiki API.
+"""Generate ICS calendars for FIBA 2027 World Cup from FIBA (authoritative, auto-updating).
+
+- docs/turkiye.ics  : Türkiye matches in European qualifiers (+ World Cup once fixtures known)
+- docs/worldcup.ics : all 2027 FIBA Basketball World Cup tournament matches (when published)
+
+Data source: FIBA website embedded Next.js games JSON (authoritative dates/times/venues).
+Replaces the earlier Wikipedia source, which had stale/wrong dates (e.g. Türkiye-İsviçre
+was shown 5 Jul 2026 Sunday; FIBA confirms 6 Jul 2026 Monday, 19:00 İstanbul).
 """
-import json, re, sys, datetime, urllib.request, os
+import json, re, sys, datetime, urllib.request, urllib.parse, os
 from zoneinfo import ZoneInfo
 
 OUTDIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
 os.makedirs(OUTDIR, exist_ok=True)
 IST = ZoneInfo("Europe/Istanbul")
-UA = "Mozilla/5.0 (compatible; fiba2027-calendar-bot/1.0; +https://github.com/selim-nba/fiba2027-calendar)"
+UA = "Mozilla/5.0 (compatible: fiba2027-calendar-bot/1.0; +https://github.com/selim-nba/fiba2027-calendar)"
+EQ_SLUG = "fiba-basketball-world-cup-2027-european-qualifiers"
+WC_SLUG = "fiba-basketball-world-cup-2027"
 
-def wiki_wikitext(title):
-    url = ("https://en.wikipedia.org/w/api.php?action=parse&prop=wikitext"
-           "&format=json&redirects=1&page=" + urllib.parse.quote(title))
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        d = json.load(r)
-    if "parse" not in d:
-        print(f"  !! no parse for {title}: {list(d)[:4]}", file=sys.stderr)
-        return ""
-    return d["parse"]["wikitext"]["*"]
-
-# ---------- helpers ----------
-MONTHS = {m: i for i, m in enumerate(
-    "January February March April May June July August September October November December".split(), 1)}
-def parse_date(s):
-    m = re.match(r"(\d{1,2})\s+([A-Z][a-z]+)\s+(\d{4})", s)
-    return datetime.date(int(m.group(3)), MONTHS[m.group(2)], int(m.group(1))) if m else None
-
-CITY_TZ = {
- 'Farum':'Europe/Copenhagen','Tbilisi':'Asia/Tbilisi','Podgorica':'Europe/Podgorica','Belgrade':'Europe/Belgrade',
- 'Istanbul':'Europe/Istanbul','Klaipėda':'Europe/Vilnius','Reykjavík':'Atlantic/Reykjavik','Limassol':'Asia/Nicosia',
- 'Riga':'Europe/Riga','Vienna':'Europe/Vienna','Tallinn':'Europe/Tallinn','Matosinhos':'Europe/Lisbon',
- 'Pitești':'Europe/Bucharest','Athens':'Europe/Athens','Fribourg':'Europe/Zurich','Osijek':'Europe/Zagreb',
- 'Gdynia':'Europe/Warsaw','The Hague':'Europe/Amsterdam','Szombathely':'Europe/Budapest','Espoo':'Europe/Helsinki',
- 'Koper':'Europe/Ljubljana','Stockholm':'Europe/Stockholm','La Laguna':'Atlantic/Canary','Oviedo':'Europe/Madrid',
- 'Madrid':'Europe/Madrid','Thessaloniki':'Europe/Athens','Coimbra':'Europe/Lisbon','Oradea':'Europe/Bucharest',
- 'Sarajevo':'Europe/Sarajevo','Tuzla':'Europe/Sarajevo','Kriens':'Europe/Zurich','Zenica':'Europe/Sarajevo',
- 'Tortona':'Europe/Rome','London':'Europe/London','Newcastle upon Tyne':'Europe/London','Livorno':'Europe/Rome',
- 'Manchester':'Europe/London','Bologna':'Europe/Rome','Neu-Ulm':'Europe/Berlin','Zagreb':'Europe/Zagreb',
- 'Bonn':'Europe/Berlin','Bamberg':'Europe/Berlin','Almere':'Europe/Amsterdam','Kraków':'Europe/Warsaw',
- 'Rouen':'Europe/Paris','Mons':'Europe/Brussels','Charleroi':'Europe/Brussels','Le Mans':'Europe/Paris',
- 'Helsinki':'Europe/Helsinki','Antwerp':'Europe/Brussels','Székesfehérvár':'Europe/Budapest','Pau':'Europe/Paris',
- 'Prague':'Europe/Prague','Gothenburg':'Europe/Stockholm','Jihlava':'Europe/Prague','Brno':'Europe/Prague',
- 'Ljubljana':'Europe/Ljubljana','Graz':'Europe/Vienna','Doha':'Asia/Qatar','Lusail':'Asia/Qatar',
- 'Al Rayyan':'Asia/Qatar','Al Wakrah':'Asia/Qatar','Düsseldorf':'Europe/Berlin','Hamburg':'Europe/Berlin',
- 'Berlin':'Europe/Berlin','Munich':'Europe/Berlin','Mannheim':'Europe/Berlin','Frankfurt':'Europe/Berlin',
- 'Cologne':'Europe/Berlin','Dortmund':'Europe/Berlin','Halle':'Europe/Berlin','Oldenburg':'Europe/Berlin',
- 'Minsk':'Europe/Minsk','Wrocław':'Europe/Warsaw','Łódź':'Europe/Warsaw','Gdańsk':'Europe/Warsaw',
- 'Katowice':'Europe/Warsaw','Lublin':'Europe/Warsaw','Bydgoszcz':'Europe/Warsaw','Tbilisi':'Asia/Tbilisi',
- 'Yerevan':'Asia/Yerevan','Tbilisi':'Asia/Tbilisi','Tbilisi':'Asia/Tbilisi',
+# ---------- FIBA team code -> ISO 3166-1 alpha-2 (for flag emoji) ----------
+# FIBA uses IOC-ish codes that differ from ISO for several countries.
+FIBA_CODE_ISO = {
+ "AUT":"AT","BEL":"BE","BIH":"BA","CRO":"HR","CYP":"CY","CZE":"CZ","DEN":"DK","ESP":"ES",
+ "EST":"EE","FIN":"FI","FRA":"FR","GBR":"GB","GEO":"GE","GER":"DE","GRE":"GR","HUN":"HU",
+ "ISL":"IS","ISR":"IL","ITA":"IT","LAT":"LV","LTU":"LT","MNE":"ME","NED":"NL","POL":"PL",
+ "POR":"PT","ROU":"RO","SLO":"SI","SRB":"RS","SUI":"CH","SWE":"SE","TUR":"TR","UKR":"UA",
+ "SVK":"SK","BUL":"BG","LUX":"LU","ALB":"AL","NOR":"NO","RUS":"RU","BLR":"BY","MDA":"MD",
+ "TUR":"TR",
+ # World Cup / other FIBA codes
+ "USA":"US","ARG":"AR","AUS":"AU","BRA":"BR","CAN":"CA","CHN":"CN","EGY":"EG","IRN":"IR",
+ "JPN":"JP","MEX":"MX","NZL":"NZ","NGA":"NG","PHI":"PH","PUR":"PR","SEN":"SN","SSD":"SS",
+ "ANG":"AO","CPV":"CV","DOM":"DO","CIV":"CI","JOR":"JO","LBN":"LB","TUN":"TN","VEN":"VE",
+ "QAT":"QA","KOR":"KR","TPE":"TW","COL":"CO","URU":"UY","PAR":"PY","CHI":"CL","MAS":"MY",
+ "JOR":"JO",
 }
-TR = {
- 'Austria':'Avusturya','Belgium':'Belçika','Bosnia and Herzegovina':'Bosna-Hersek','Croatia':'Hırvatistan',
- 'Cyprus':'Kıbrıs','Czech Republic':'Çekya','Denmark':'Danimarka','Estonia':'Estonya','Finland':'Finlandiya',
- 'France':'Fransa','Georgia':'Gürcistan','Germany':'Almanya','Great Britain':'Büyük Britanya','Greece':'Yunanistan',
- 'Hungary':'Macaristan','Iceland':'İzlanda','Israel':'İsrail','Italy':'İtalya','Latvia':'Letonya',
- 'Lithuania':'Litvanya','Montenegro':'Karadağ','Netherlands':'Hollanda','Poland':'Polonya','Portugal':'Portekiz',
- 'Romania':'Romanya','Serbia':'Sırbistan','Slovenia':'Slovenya','Spain':'İspanya','Sweden':'İsveç',
- 'Switzerland':'İsviçre','Swizerland':'İsviçre','Turkey':'Türkiye','Ukraine':'Ukrayna','Qatar':'Katar',
- 'United States':'ABD','USA':'ABD','Argentina':'Arjantin','Australia':'Avustralya','Brazil':'Brezilya',
- 'Canada':'Kanada','China':'Çin','Egypt':'Mısır','Iran':'İran','Japan':'Japonya','Mexico':'Meksika',
- 'New Zealand':'Yeni Zelanda','Nigeria':'Nijerya','Philippines':'Filipinler','Puerto Rico':'Porto Riko',
- 'Senegal':'Senegal','South Sudan':'Güney Sudan','Angola':'Angola','Cape Verde':'Yeşil Burun Adaları',
- 'Dominican Republic':'Dominik Cumhuriyeti','Georgia':'Gürcistan','Ivory Coast':'Fildişi Sahili',
- 'Jordan':'Ürdün','Lebanon':'Lübnan','Mexico':'Meksika','Montenegro':'Karadağ','South Sudan':'Güney Sudan',
- 'Tunisia':'Tunus','Venezuela':'Venezuela','Angola':'Angola',
+# ---------- FIBA shortName (English) -> Turkish ----------
+TR_NAMES = {
+ "Austria":"Avusturya","Belgium":"Belçika","Bosnia and Herzegovina":"Bosna-Hersek",
+ "Bulgaria":"Bulgaristan","Croatia":"Hırvatistan","Cyprus":"Kıbrıs","Czech Republic":"Çekya",
+ "Denmark":"Danimarka","Estonia":"Estonya","Finland":"Finlandiya","France":"Fransa",
+ "Georgia":"Gürcistan","Germany":"Almanya","Great Britain":"Büyük Britanya","Greece":"Yunanistan",
+ "Hungary":"Macaristan","Iceland":"İzlanda","Israel":"İsrail","Italy":"İtalya","Latvia":"Letonya",
+ "Lithuania":"Litvanya","Luxembourg":"Lüksemburg","Montenegro":"Karadağ","Netherlands":"Hollanda",
+ "Norway":"Norveç","Poland":"Polonya","Portugal":"Portekiz","Romania":"Romanya","Russia":"Rusya",
+ "Serbia":"Sırbistan","Slovakia":"Slovakya","Slovenia":"Slovenya","Spain":"İspanya",
+ "Sweden":"İsveç","Switzerland":"İsviçre","Türkiye":"Türkiye","Turkey":"Türkiye","Ukraine":"Ukrayna",
+ "United States":"ABD","USA":"ABD","Argentina":"Arjantin","Australia":"Avustralya","Brazil":"Brezilya",
+ "Canada":"Kanada","China":"Çin","Egypt":"Mısır","Iran":"İran","Japan":"Japonya","Mexico":"Meksika",
+ "New Zealand":"Yeni Zelanda","Nigeria":"Nijerya","Philippines":"Filipinler","Puerto Rico":"Porto Riko",
+ "Senegal":"Senegal","South Sudan":"Güney Sudan","Angola":"Angola","Cape Verde":"Yeşil Burun Adaları",
+ "Dominican Republic":"Dominik Cumhuriyeti","Ivory Coast":"Fildişi Sahili","Jordan":"Ürdün",
+ "Lebanon":"Lübnan","Tunisia":"Tunus","Venezuela":"Venezuela","Qatar":"Katar","South Korea":"Güney Kore",
+ "Chinese Taipei":"Çin Taipei","Colombia":"Kolombiya","Uruguay":"Uruguay","Paraguay":"Paraguay",
+ "Chile":"Şili","Malaysia":"Malezya",
 }
+ROUND_TR = {"1st Round":"1. Tur","2nd Round":"2. Tur","3rd Round":"3. Tur","4th Round":"4. Tur"}
 
-# Country name -> ISO 3166-1 alpha-2 (for flag emoji); English names as found in Wikipedia id fields
-NAME_ISO = {
- 'Austria':'AT','Belgium':'BE','Bosnia and Herzegovina':'BA','Croatia':'HR','Cyprus':'CY',
- 'Czech Republic':'CZ','Denmark':'DK','Estonia':'EE','Finland':'FI','France':'FR','Georgia':'GE',
- 'Germany':'DE','Great Britain':'GB','Greece':'GR','Hungary':'HU','Iceland':'IS','Israel':'IL',
- 'Italy':'IT','Latvia':'LV','Lithuania':'LT','Montenegro':'ME','Netherlands':'NL','Poland':'PL',
- 'Portugal':'PT','Romania':'RO','Serbia':'RS','Slovenia':'SI','Spain':'ES','Sweden':'SE',
- 'Switzerland':'CH','Swizerland':'CH','Turkey':'TR','Ukraine':'UA','Qatar':'QA','United States':'US',
- 'USA':'US','Argentina':'AR','Australia':'AU','Brazil':'BR','Canada':'CA','China':'CN','Egypt':'EG',
- 'Iran':'IR','Japan':'JP','Mexico':'MX','New Zealand':'NZ','Nigeria':'NG','Philippines':'PH',
- 'Puerto Rico':'PR','Senegal':'SN','South Sudan':'SS','Angola':'AO','Cape Verde':'CV',
- 'Dominican Republic':'DO','Ivory Coast':'CI','Jordan':'JO','Lebanon':'LB','Tunisia':'TN',
- 'Venezuela':'VE',
-}
-def flag(name):
-    iso = NAME_ISO.get(name)
+def flag(code):
+    iso = FIBA_CODE_ISO.get(code)
     if not iso or len(iso) != 2:
         return ""
     return chr(0x1F1E6 + (ord(iso[0]) - ord('A'))) + chr(0x1F1E6 + (ord(iso[1]) - ord('A')))
-def flag_matchup(idstr):
-    """Return 'flagA flagB' for an id like 'Turkey v Spain'."""
-    if ' v ' not in idstr:
-        return ''
-    a, b = idstr.split(' v ', 1)
-    return flag(a.strip()) + ' ' + flag(b.strip())
-def tr(n): return TR.get(n, n)
-def tr_matchup(s):
-    if " v " in s:
-        a, b = s.split(" v ", 1)
-        return f"{tr(a.strip())} - {tr(b.strip())}"
-    return s
-def tr_matchup_flag(idstr):
-    if ' v ' not in idstr:
-        return idstr
-    a, b = idstr.split(' v ', 1); a=a.strip(); b=b.strip()
-    return f"{flag(a)} {tr(a)} - {flag(b)} {tr(b)}"
 
-def esc(s): return str(s).replace("\\","\\\\").replace("\n","\\n").replace(",","\\,").replace(";","\\;")
+def tr_name(short):
+    return TR_NAMES.get(short, short)
 
-# ---------- parser ----------
-def strip_wm(s):
-    s = s.replace("\r", " ")  # neutralize CR before any ICS value is assembled
-    s = re.sub(r"''+", "", s)
-    s = re.sub(r"\[\[([^\]|]*\|)?([^\]]*)\]\]", r"\2", s)
-    s = re.sub(r"\{\{refn[^}]*\}\}", "", s)
-    s = re.sub(r"\{\{[A-Za-z0-9\- ]*\|", "", s)
-    return s.replace("}}", "").strip()
+def esc(s):
+    return str(s).replace("\\", "\\\\").replace("\n", "\\n").replace(",", "\\,").replace(";", "\\;")
 
-def field(t, key):
-    m = re.search(r"\|" + key + r"=(.*)", t)
-    if not m: return ""
-    return strip_wm(m.group(1).split("\n")[0])
+# ---------- FIBA fetch + parse ----------
+def fetch_fiba_html(slug):
+    """Fetch the FIBA games page HTML (contains embedded games JSON). Returns text or ''."""
+    url = f"https://www.fiba.basketball/en/events/{slug}/games"
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept-Language": "en"})
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return r.read().decode("utf-8", "replace")
+    except Exception as e:
+        print(f"  !! FIBA fetch failed for {slug!r}: {e}", file=sys.stderr)
+        return ""
 
-def parse_blocks(wikitext, group_round_prefix=""):
-    """Return list of matches from {{basketballbox collapsible|...}} blocks."""
-    lines = wikitext.split("\n")
-    out = []; cur_group = None; cur_round = None
-    i = 0; n = len(lines)
-    while i < n:
-        ln = lines[i]
-        if ln.startswith("===First round") or ln.startswith("===Second round") or ln.startswith("===Group stage") or ln.startswith("===Final round") or ln.startswith("===Knockout"):
-            cur_round = ln.strip("= ").strip()
-        if re.match(r"^====+Group [A-Z0-9]====+", ln) or re.match(r"^====+Group [A-Z0-9] ", ln):
-            mm = re.search(r"Group ([A-Z0-9])", ln); cur_group = mm.group(1) if mm else cur_group
-        if "{{basketballbox collapsible" in ln or "{{basketballbox" in ln:
-            j = i; buf = []
-            while j < n:
-                buf.append(lines[j])
-                if j > i and "".join(buf).count("}}") >= "".join(buf).count("{{"):
-                    break
-                j += 1
-            t = "\n".join(buf)
-            mid = field(t, "id").strip('" ')
-            date = field(t, "date"); tm = field(t, "time")
-            sa = re.sub(r"[^0-9]", "", field(t, "scoreA")); sb = re.sub(r"[^0-9]", "", field(t, "scoreB"))
-            loc = field(t, "location"); arena = field(t, "arena")
-            rep = re.search(r"FIBA game\|(\d+)", t)
-            out.append({"group": cur_group, "round": cur_round, "id": mid, "date": date, "time": tm,
-                        "scoreA": sa, "scoreB": sb, "loc": loc, "arena": arena,
-                        "fid": rep.group(1) if rep else ""})
-            i = j + 1; continue
-        i += 1
-    return out
+def parse_fiba_games(html):
+    """Parse the embedded games JSON. Returns list of game dicts (empty on failure).
 
-def tz_for(city):
-    if not city: return None
-    tz = CITY_TZ.get(city)
-    if not tz and ", " in city:
-        tz = CITY_TZ.get(city.split(",")[0].strip())
-    return ZoneInfo(tz) if tz else None
+    FIBA embeds the games array (sometimes twice: list + calendar view); we dedupe
+    by gameId. gameId precedes teamA in each game object, so we use gameId positions
+    as game boundaries (splitting on teamA alone misaligns the id by one game).
+    """
+    if not html:
+        return []
+    h = html.replace('\\\"', '"')  # normalise escaped quotes
+    games = {}
+    # positions of each "gameId":<digits>
+    idx = [m.start() for m in re.finditer(r'"gameId":(\d+)', h)]
+    idx.append(len(h))  # sentinel end
+    for k in range(len(idx) - 1):
+        block = h[idx[k]:idx[k + 1]]
+        gid = re.match(r'"gameId":(\d+)', block)
+        if not gid:
+            continue
+        gid = gid.group(1)
+        def first(rx):
+            m = re.search(rx, block)
+            return m.group(1) if m else ""
+        # teamA = first teamA object; teamB = second teamX code/name
+        ta = re.search(r'"teamA":\{"teamId":\d+,"organisationId":\d+,"code":"([^"]+)","officialName":"[^"]*","shortName":"([^"]*)"', block)
+        tb = re.search(r'"teamB":\{"teamId":\d+,"organisationId":\d+,"code":"([^"]+)","officialName":"[^"]*","shortName":"([^"]*)"', block)
+        if not ta or not tb:
+            continue
+        sa = first(r'"teamAScore":(\d+|null)')
+        sb = first(r'"teamBScore":(\d+|null)')
+        cps = first(r'"currentPeriodStatus":"([^"]*)"')
+        lgs = first(r'"liveGameStatus":(\d+)')
+        games[gid] = {
+            "gameId": int(gid),
+            "ca": ta.group(1), "na": ta.group(2),
+            "cb": tb.group(1), "nb": tb.group(2),
+            "sa": None if sa in ("", "null") else int(sa),
+            "sb": None if sb in ("", "null") else int(sb),
+            "dtu": first(r'"gameDateTimeUTC":"([^"]*)"'),
+            "dtl": first(r'"gameDateTime":"([^"]*)"'),
+            "tz": first(r'"ianaTimeZone":"([^"]*)"'),
+            "city": first(r'"hostCity":"([^"]*)"').strip().rstrip('\\\\ \' "'),
+            "venue": first(r'"venueName":"([^"]*)"').strip().rstrip('\\\\ \' "'),
+            "postponed": first(r'"isPostponed":(true|false)') == "true",
+            "round": first(r'"roundName":"([^"]*)"'),
+            "group": first(r'"groupPairingCode":"([^"]*)"'),
+            "finished": cps == "E" or lgs == "999",
+        }
+    return list(games.values())
 
+def parse_utc(iso):
+    # "2026-07-06T16:00:00"
+    m = re.match(r"(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})", iso)
+    if not m:
+        return None
+    return datetime.datetime(int(m[1]), int(m[2]), int(m[3]),
+                             int(m[4]), int(m[5]), int(m[6]), tzinfo=ZoneInfo("UTC"))
+
+# ---------- ICS build ----------
 def build_ics(matches, path, calname, caldesc):
     L = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//FIBA 2027 Calendar//TR//",
          "CALSCALE:GREGORIAN", "METHOD:PUBLISH", f"X-WR-CALNAME:{esc(calname)}",
          "X-WR-TIMEZONE:Europe/Istanbul", f"X-WR-CALDESC:{esc(caldesc)}"]
+    # sort by UTC start, then matchup
+    def key(m):
+        u = parse_utc(m["dtu"])
+        return (u or datetime.datetime.max.replace(tzinfo=ZoneInfo("UTC")),
+                m["ca"] + m["cb"])
     uc = 0
-    for m in matches:
-        d = parse_date(m["date"])
-        if not d: continue
-        is_ph = bool(m["id"]) and bool(re.fullmatch(r"[A-Z][0-9] v [A-Z][0-9]|Group [A-Z][0-9]", m["id"]))
+    for m in sorted(matches, key=key):
+        u = parse_utc(m["dtu"])
+        if not u:
+            continue
+        na, nb = tr_name(m["na"]), tr_name(m["nb"])
+        fa, fb = flag(m["ca"]), flag(m["cb"])
         grp = m["group"] or "?"
-        rnd = ""
-        if m["round"]:
-            if "First" in m["round"]: rnd = "1. Tur"
-            elif "Second" in m["round"]: rnd = "2. Tur"
-            elif "Group stage" in m["round"]: rnd = "Grup Aşaması"
-            elif "Final" in m["round"]: rnd = "Final Aşaması"
-            else: rnd = m["round"]
-        played = bool(m["scoreA"] and m["scoreB"])
-        city = m["loc"]; tz = tz_for(city)
-        tm = m["time"]; has_time = bool(re.match(r"\d{1,2}:\d{2}", tm or "")) and tz
-        if is_ph:
-            summary = f"🏀 FIBA 2027 · {rnd or 'Maç'} · Grup {grp}"
-        else:
-            summary = f"🏀 {tr_matchup_flag(m['id'])} · Grup {grp}"
-            if played: summary += f"  {m['scoreA']}-{m['scoreB']}"
+        rnd = ROUND_TR.get(m["round"], m["round"] or "")
+        played = bool(m.get("finished")) and m["sa"] is not None and m["sb"] is not None
+        score = f"  {m['sa']}-{m['sb']}" if played else ""
+        summary = f"🏀 {fa} {na} - {fb} {nb} · Grup {grp}{score}"
         dp = [caldesc]
-        if rnd: dp.append(f"Tur: {rnd}")
+        if rnd:
+            dp.append(f"Tur: {rnd}")
         dp.append(f"Grup: {grp}")
-        if not is_ph:
-            dp.append(f"Maç: {tr_matchup_flag(m['id'])}" + (f"  {m['scoreA']}-{m['scoreB']} (oynandı)" if played else ""))
-        if m["arena"]: dp.append(f"Salon: {m['arena']}")
-        if city: dp.append(f"Şehir: {city}")
-        if has_time:
-            ldt = datetime.datetime.combine(d, datetime.time(int(tm.split(":")[0]), int(tm.split(":")[1])), tz)
-            dp += [f"Başlangıç (yerel): {tm}", f"Başlangıç (İstanbul): {ldt.astimezone(IST).strftime('%H:%M')}"]
-        if m["fid"]: dp.append(f"FIBA: https://www.fiba.basketball/en/games/{m['fid']}")
+        dp.append(f"Maç: {fa} {na} - {fb} {nb}{score}" + (" (oynandı)" if played else ""))
+        if m["postponed"]:
+            dp.append("DİKKAT: Bu maç ertelendi (FIBA)")
+        if m["venue"]:
+            dp.append(f"Salon: {m['venue']}")
+        if m["city"]:
+            dp.append(f"Şehir: {m['city']}")
+        # venue local time + İstanbul time
+        if m["tz"]:
+            try:
+                ldt = u.astimezone(ZoneInfo(m["tz"]))
+                dp.append(f"Başlangıç (yerel): {ldt.strftime('%H:%M')} ({m['tz']})")
+            except Exception:
+                pass
+        ist = u.astimezone(IST)
+        dp.append(f"Başlangıç (İstanbul): {ist.strftime('%H:%M')}")
+        dp.append(f"FIBA: https://www.fiba.basketball/en/games/{m['gameId']}")
         desc = "\\n".join(esc(x) for x in dp)
         uc += 1
-        L += ["BEGIN:VEVENT", f"UID:fiba2027-{uc}@selim-nba"]
-        if has_time:
-            u = ldt.astimezone(ZoneInfo("UTC"))
-            L += [f"DTSTART:{u.strftime('%Y%m%dT%H%M%SZ')}",
-                  f"DTEND:{(u + datetime.timedelta(hours=2, minutes=15)).strftime('%Y%m%dT%H%M%SZ')}"]
-        else:
-            L += [f"DTSTART;VALUE=DATE:{d.strftime('%Y%m%d')}",
-                  f"DTEND;VALUE=DATE:{(d + datetime.timedelta(days=1)).strftime('%Y%m%d')}"]
-        loc = ", ".join(x for x in [m["arena"], city] if x)
-        L += [f"SUMMARY:{esc(summary)}", f"DESCRIPTION:{desc}"]
-        if loc: L.append(f"LOCATION:{esc(loc)}")
+        end = u + datetime.timedelta(hours=2, minutes=15)
+        L += ["BEGIN:VEVENT", f"UID:fiba2027-{m['gameId']}@selim-nba",
+              f"DTSTART:{u.strftime('%Y%m%dT%H%M%SZ')}",
+              f"DTEND:{end.strftime('%Y%m%dT%H%M%SZ')}",
+              f"SUMMARY:{esc(summary)}", f"DESCRIPTION:{desc}"]
+        loc = ", ".join(x for x in [m["venue"], m["city"]] if x)
+        if loc:
+            L.append(f"LOCATION:{esc(loc)}")
         L += ["STATUS:CONFIRMED", "TRANSP:OPAQUE", "END:VEVENT"]
     L.append("END:VCALENDAR")
     with open(path, "w") as f:
         f.write("\r\n".join(L) + "\r\n")
     return uc
 
-def fetch_wt(title, attempts=2):
-    """Fetch Wikipedia wikitext with a tiny retry. Returns (ok, text)."""
-    last = None
-    for a in range(attempts):
-        try:
-            return True, wiki_wikitext(title)
-        except Exception as e:  # network / HTTP / JSON errors
-            last = e
-            print(f"  !! fetch attempt {a+1} failed for {title!r}: {e}", file=sys.stderr)
-    return False, ""
-
 def write_if_better(path, matches, calname, caldesc):
-    """Write ICS only when we have real data; never wipe a good file on a bad fetch.
-
-    Policy: overwrite when the new calendar has events, OR when no prior file exists.
-    A transient empty/failed result keeps the last known-good file so subscribers
-    never lose their calendar because Wikipedia was briefly unavailable.
-    """
+    """Write ICS only when we have real data; never wipe a good file on a bad fetch."""
     if not matches:
         if os.path.exists(path):
             print(f"  ~ kept existing {os.path.basename(path)} (no new matches; preserving last-good file)")
             return 0
-        # first run with legitimately 0 events (e.g. WC fixtures not published yet)
     return build_ics(matches, path, calname, caldesc)
 
 def main():
-    eq_ok, eq = fetch_wt("2027 FIBA Basketball World Cup qualification (Europe)")
-    eqm = parse_blocks(eq) if eq_ok else []
-    tur_eq = [m for m in eqm if m["id"] and "Turkey" in m["id"]]
+    eq_html = fetch_fiba_html(EQ_SLUG)
+    eq = parse_fiba_games(eq_html)
+    print(f"  European qualifiers: {len(eq)} games parsed")
+    tur_eq = [g for g in eq if g["ca"] == "TUR" or g["cb"] == "TUR"]
 
-    wc_ok, wc = fetch_wt("2027 FIBA Basketball World Cup")
-    wcm = parse_blocks(wc) if wc_ok else []
-    tur_wc = [m for m in wcm if m["id"] and "Turkey" in m["id"]]
+    wc_html = fetch_fiba_html(WC_SLUG)
+    wc = parse_fiba_games(wc_html)
+    print(f"  World Cup: {len(wc)} games parsed")
+    tur_wc = [g for g in wc if g["ca"] == "TUR" or g["cb"] == "TUR"]
 
     # Single Türkiye calendar: qualifiers + World Cup (when fixtures are published).
-    # WC is best-effort: a transient WC fetch failure must not drop qualifier matches.
-    turkiye = sorted(tur_eq + tur_wc, key=lambda m: (parse_date(m["date"]) or datetime.date.max, m["id"]))
-    if eq_ok or tur_wc:
+    turkiye = tur_eq + tur_wc
+    if tur_eq or tur_wc:
         n1 = write_if_better(os.path.join(OUTDIR, "turkiye.ics"), turkiye,
                              "FIBA 2027 - Türkiye A Milli Takımı",
                              "FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)")
@@ -261,16 +226,15 @@ def main():
     else:
         print("  ~ turkiye.ics: both fetches failed; kept last-good file")
 
-    # Bonus: full World Cup tournament calendar (all teams)
-    if wc_ok:
-        n2 = write_if_better(os.path.join(OUTDIR, "worldcup.ics"), wcm,
+    # Bonus: full World Cup tournament calendar (all teams, when published).
+    if wc:
+        n2 = write_if_better(os.path.join(OUTDIR, "worldcup.ics"), wc,
                              "FIBA 2027 Dünya Kupası",
                              "FIBA Basketbol 2027 Dünya Kupası - tüm turnuva maçları (otomatik güncellenir)")
         print(f"  worldcup.ics: {n2} events")
     else:
-        print("  ~ worldcup.ics: fetch failed; kept last-good file")
+        print("  ~ worldcup.ics: no WC fixtures published yet; kept last-good file")
 
-    # Landing page (static, self-contained; JS reads turkiye.ics to show next match)
     html = r"""<!doctype html>
 <html lang="tr">
 <head>
@@ -487,6 +451,6 @@ fetch(base+"turkiye.ics").then(r=>r.text()).then(t=>{
         f.write(html)
     print("done.")
 
+
 if __name__ == "__main__":
-    import urllib.parse  # noqa: placed here so it's available to wiki_wikitext
     main()
