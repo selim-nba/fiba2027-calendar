@@ -328,10 +328,12 @@ def main():
 <body>
 <div class="wrap">
   <header>
-    <div class="flag">🇹🇷</div>
+    <div class="toprow">
+      <div class="flag">🇹🇷</div>
+      <button class="share" id="shareBtn">Paylaş</button>
+    </div>
     <h1>FIBA 2027 — Türkiye A Milli Takımı</h1>
     <p class="sub">Avrupa Elemeleri + Dünya Kupası · takvimden takip</p>
-  <button class="share" id="shareBtn">🔗 Arkadaşlarınla paylaş</button>
   </header>
 
   <p class="hype">12 Dev Adam'a giden yolda hiçbir maçı kaçırma. 🇹🇷
