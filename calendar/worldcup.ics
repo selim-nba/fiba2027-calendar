@@ -1,0 +1,9 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FIBA 2027 Calendar//TR//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FIBA 2027 Dünya Kupası
+X-WR-TIMEZONE:Europe/Istanbul
+X-WR-CALDESC:FIBA Basketbol 2027 Dünya Kupası - turnuva maçları (otomatik güncellenir)
+END:VCALENDAR

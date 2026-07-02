@@ -1,0 +1,69 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FIBA 2027 Calendar//TR//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FIBA 2027 Elemeler - Türkiye
+X-WR-TIMEZONE:Europe/Istanbul
+X-WR-CALDESC:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)
+BEGIN:VEVENT
+UID:fiba2027-1@selim-nba
+DTSTART:20251127T180000Z
+DTEND:20251127T201500Z
+SUMMARY:🏀 Türkiye - Bosna-Hersek · Grup C  93-71
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: Türkiye - Bosna-Hersek  93-71 (oynandı)\nSalon: Basketball Development Center\nŞehir: Istanbul\nBaşlangıç (yerel): 21:00\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/127023
+LOCATION:Basketball Development Center\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-2@selim-nba
+DTSTART:20251130T160000Z
+DTEND:20251130T181500Z
+SUMMARY:🏀 İsviçre - Türkiye · Grup C  60-85
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: İsviçre - Türkiye  60-85 (oynandı)\nSalon: Site Sportif Saint-Léonard\nŞehir: Fribourg\nBaşlangıç (yerel): 17:00\nBaşlangıç (İstanbul): 19:00\nFIBA: https://www.fiba.basketball/en/games/127022
+LOCATION:Site Sportif Saint-Léonard\, Fribourg
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-3@selim-nba
+DTSTART:20260227T180000Z
+DTEND:20260227T201500Z
+SUMMARY:🏀 Sırbistan - Türkiye · Grup C  78-82
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: Sırbistan - Türkiye  78-82 (oynandı)\nSalon: Aleksandar Nikolić Hall\nŞehir: Belgrade\nBaşlangıç (yerel): 19:00\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/127020
+LOCATION:Aleksandar Nikolić Hall\, Belgrade
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-4@selim-nba
+DTSTART:20260302T180000Z
+DTEND:20260302T201500Z
+SUMMARY:🏀 Türkiye - Sırbistan · Grup C  94-86
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: Türkiye - Sırbistan  94-86 (oynandı)\nSalon: Basketball Development Center\nŞehir: Istanbul\nBaşlangıç (yerel): 21:00\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/127017
+LOCATION:Basketball Development Center\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-5@selim-nba
+DTSTART:20260702T180000Z
+DTEND:20260702T201500Z
+SUMMARY:🏀 Bosna-Hersek - Türkiye · Grup C
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: Bosna-Hersek - Türkiye\nSalon: Arena Zenica\nŞehir: Zenica\nBaşlangıç (yerel): 20:00\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/127014
+LOCATION:Arena Zenica\, Zenica
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-6@selim-nba
+DTSTART:20260705T160000Z
+DTEND:20260705T181500Z
+SUMMARY:🏀 Türkiye - İsviçre · Grup C
+DESCRIPTION:FIBA 2027 Dünya Kupası Avrupa Elemeleri - Türkiye A Milli Takım (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: Türkiye - İsviçre\nSalon: Sinan Erdem Dome\nŞehir: Istanbul\nBaşlangıç (yerel): 19:00\nBaşlangıç (İstanbul): 19:00\nFIBA: https://www.fiba.basketball/en/games/127013
+LOCATION:Sinan Erdem Dome\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

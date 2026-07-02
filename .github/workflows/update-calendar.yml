@@ -1,0 +1,33 @@
+name: Update FIBA 2027 calendar
+on:
+  schedule:
+    - cron: "17 6 * * *"   # daily ~06:17 UTC
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+permissions:
+  contents: write
+concurrency:
+  group: update-calendar
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Generate ICS from Wikipedia
+        run: python3 generate.py
+      - name: Commit & push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add calendar/*.ics calendar/index.html
+          if git diff --staged --quiet; then
+            echo "No changes."
+          else
+            git commit -m "chore: refresh FIBA 2027 calendar $(date -u +%F)"
+            git push
+          fi
