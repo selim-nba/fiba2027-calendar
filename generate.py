@@ -111,6 +111,7 @@ def esc(s): return str(s).replace("\\","\\\\").replace("\n","\\n").replace(",","
 
 # ---------- parser ----------
 def strip_wm(s):
+    s = s.replace("\r", " ")  # neutralize CR before any ICS value is assembled
     s = re.sub(r"''+", "", s)
     s = re.sub(r"\[\[([^\]|]*\|)?([^\]]*)\]\]", r"\2", s)
     s = re.sub(r"\{\{refn[^}]*\}\}", "", s)
@@ -405,7 +406,7 @@ fetch(base+"turkiye.ics").then(r=>r.text()).then(t=>{
   const up=evs.filter(e=>e.d && e.d.getTime()>=now).sort((a,b)=>a.d-b.d);
   const e=up[0];
   if(!e){document.getElementById("who").textContent="Planlanmış maç yok (fikstür bekleniyor)";return;}
-  document.getElementById("who").innerHTML=e.sum.replace(/🏀/,"");
+  document.getElementById("who").textContent=e.sum.replace("🏀","").trim();
   const when=e.d.toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   const time=e.d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
   document.getElementById("meta").textContent=when+" · "+time+" (İstanbul)"+(e.loc?" · "+e.loc:"");
