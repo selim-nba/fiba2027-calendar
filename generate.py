@@ -277,6 +277,13 @@ def main():
   button.ok{border-color:#2e7d32;color:#2e7d32}
   ol{margin:6px 0 0;padding-left:20px}
   ol li{margin:6px 0}
+  .btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  a.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;
+        font-size:14px;text-decoration:none;color:var(--ink);white-space:nowrap;cursor:pointer;display:inline-block}
+  a.btn:hover{border-color:var(--ink)}
+  .credit{margin-top:10px;font-size:13px}
+  .credit a{font-weight:600;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
+  .credit a:hover{border-color:var(--red);color:var(--red)}
   .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
   a{color:var(--red)}
   @media(max-width:520px){.urlrow{flex-direction:column;align-items:stretch}code{font-size:12px}}
@@ -310,6 +317,12 @@ def main():
         <code id="u1"></code>
         <button onclick="copy('u1',this)">Kopyala</button>
       </div>
+      <div class="btns">
+        <a class="btn" id="g1" target="_blank" rel="noopener">📅 Google Takvim</a>
+        <a class="btn" id="a1">🍎 Apple Takvim</a>
+        <a class="btn" id="o1" target="_blank" rel="noopener">🟦 Outlook</a>
+        <a class="btn" id="d1" download>⬇️ .ics indir</a>
+      </div>
     </div>
     <div class="cal">
       <div class="name">🌍 2027 Dünya Kupası — tüm turnuva</div>
@@ -317,6 +330,12 @@ def main():
       <div class="urlrow">
         <code id="u2"></code>
         <button onclick="copy('u2',this)">Kopyala</button>
+      </div>
+      <div class="btns">
+        <a class="btn" id="g2" target="_blank" rel="noopener">📅 Google Takvim</a>
+        <a class="btn" id="a2">🍎 Apple Takvim</a>
+        <a class="btn" id="o2" target="_blank" rel="noopener">🟦 Outlook</a>
+        <a class="btn" id="d2" download>⬇️ .ics indir</a>
       </div>
     </div>
   </section>
@@ -335,6 +354,7 @@ def main():
     Veri kaynağı: <a href="https://en.wikipedia.org/wiki/2027_FIBA_Basketball_World_Cup_qualification_(Europe)" target="_blank" rel="noopener">Wikipedia / FIBA</a>.
     Her gün GitHub Action ile otomatik yenilenir.
     <a href="https://github.com/selim-nba/fiba2027-calendar" target="_blank" rel="noopener">Kaynak repo</a>.
+    <div class="credit">Yapan: <a href="https://www.linkedin.com/in/selimyoruk/" target="_blank" rel="noopener">Selim Yoruk</a> 🇹🇷</div>
   </div>
 </div>
 
@@ -342,6 +362,17 @@ def main():
 const base = location.origin + location.pathname.replace(/index\.html$/, "");
 document.getElementById("u1").textContent = base + "turkiye.ics";
 document.getElementById("u2").textContent = base + "worldcup.ics";
+
+function wireCal(n, file){
+  const https = base + file;
+  const webcal = https.replace(/^https?:\/\//, "webcal://");
+  document.getElementById("g"+n).href = "https://calendar.google.com/calendar?cid=" + encodeURIComponent(https);
+  document.getElementById("a"+n).href = webcal;
+  document.getElementById("o"+n).href = webcal;
+  document.getElementById("d"+n).href = https;
+}
+wireCal(1, "turkiye.ics");
+wireCal(2, "worldcup.ics");
 
 function copy(id, btn){
   navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
