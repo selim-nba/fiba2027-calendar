@@ -1,1 +1,150 @@
-<!doctype html><html lang=tr><head><meta charset=utf-8><title>FIBA 2027 Takvim</title></head><body style='font:16px system-ui;max-width:680px;margin:2rem auto;line-height:1.6'><h1>FIBA 2027 Takvim Aboneliği</h1><p>Google Calendar → Dişli → Ayarlar → Takvim ekle → URL ile → aşağıdaki adresi yapıştır.</p><p><b>Türkiye (elemeler + Dünya Kupası):</b><br><code id=u1></code></p><p><b>Dünya Kupası (tüm maçlar):</b><br><code id=u2></code></p><script>var b=location.origin+location.pathname.replace(/index.html$/, '');document.getElementById('u1').textContent=b+'turkiye.ics';document.getElementById('u2').textContent=b+'worldcup.ics';</script></body></html>
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FIBA 2027 - Türkiye A Milli Takımı Takvimi</title>
+<style>
+  :root{--red:#E30A17;--ink:#1b1d21;--muted:#6b7177;--line:#e6e8eb;--bg:#f7f5f2}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:28px 20px 64px}
+  header h1{font-size:clamp(26px,5vw,38px);margin:8px 0 2px;letter-spacing:-.5px}
+  header .flag{font-size:clamp(40px,9vw,64px);line-height:1}
+  .sub{color:var(--muted);margin:0 0 4px}
+  .hype{font-size:18px;font-weight:600;margin:18px 0 6px}
+  .hype small{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:4px}
+  .next{border:1px solid var(--line);border-left:5px solid var(--red);border-radius:10px;
+        padding:16px 18px;margin:18px 0;background:#fff}
+  .next .label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .next .who{font-size:22px;font-weight:700;margin:6px 0 2px}
+  .next .meta{color:var(--muted);font-size:14px}
+  .next .cd{font-variant-numeric:tabular-nums;font-weight:700;color:var(--red);margin-top:8px;font-size:18px}
+  section{margin:26px 0}
+  h2{font-size:14px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:0 0 12px}
+  .cal{border:1px solid var(--line);border-radius:10px;background:#fff;padding:14px 16px;margin:12px 0}
+  .cal .name{font-weight:700;margin-bottom:2px}
+  .cal .desc{color:var(--muted);font-size:14px;margin-bottom:10px}
+  .urlrow{display:flex;gap:8px;align-items:center}
+  code{flex:1;font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace;background:#f1f0ed;
+       border:1px solid var(--line);border-radius:8px;padding:8px 10px;word-break:break-all;white-space:pre-wrap}
+  button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;
+         cursor:pointer;font-size:14px;white-space:nowrap}
+  button:hover{border-color:var(--ink)}
+  button.ok{border-color:#2e7d32;color:#2e7d32}
+  ol{margin:6px 0 0;padding-left:20px}
+  ol li{margin:6px 0}
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  a{color:var(--red)}
+  @media(max-width:520px){.urlrow{flex-direction:column;align-items:stretch}code{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="flag">🇹🇷</div>
+    <h1>FIBA 2027 — Türkiye A Milli Takımı</h1>
+    <p class="sub">Avrupa Elemeleri + Dünya Kupası · takvimden takip</p>
+  </header>
+
+  <p class="hype">12 Dev Adam'a giden yolda hiçbir maçı kaçırma. 🇹🇷
+    <small>Takvim otomatik güncellenir: fikstür netleştikçe yeni maçlar kendiliğinden eklenir, saatler İstanbul saatine çevrilir.</small>
+  </p>
+
+  <div class="next" id="next">
+    <div class="label">Sıradaki maç</div>
+    <div class="who" id="who">…</div>
+    <div class="meta" id="meta"></div>
+    <div class="cd" id="cd"></div>
+  </div>
+
+  <section>
+    <h2>Takvime abone ol</h2>
+    <div class="cal">
+      <div class="name">🇹🇷 Türkiye — tüm maçlar (elemeler + Dünya Kupası)</div>
+      <div class="desc">Sadece Türkiye A Milli Takımı'nın maçları. Tek takvimde birleşik.</div>
+      <div class="urlrow">
+        <code id="u1"></code>
+        <button onclick="copy('u1',this)">Kopyala</button>
+      </div>
+    </div>
+    <div class="cal">
+      <div class="name">🌍 2027 Dünya Kupası — tüm turnuva</div>
+      <div class="desc">Tüm takımların turnuva maçları (fikstür yayınlandıkça dolar).</div>
+      <div class="urlrow">
+        <code id="u2"></code>
+        <button onclick="copy('u2',this)">Kopyala</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Google Calendar — 30 saniyede kurulum</h2>
+    <ol>
+      <li><a href="https://calendar.google.com" target="_blank" rel="noopener">calendar.google.com</a> → dişli ⚙ → <b>Ayarlar</b></li>
+      <li>Sol menü → <b>Takvim ekle</b> → <b>URL'den</b></li>
+      <li>Yukarıdaki adresi yapıştır → <b>Takvim ekle</b></li>
+      <li>Telefonda aynı Google hesabında senkron görünür. Google abone takvimleri birkaç saatte bir yeniler.</li>
+    </ol>
+  </section>
+
+  <div class="foot">
+    Veri kaynağı: <a href="https://en.wikipedia.org/wiki/2027_FIBA_Basketball_World_Cup_qualification_(Europe)" target="_blank" rel="noopener">Wikipedia / FIBA</a>.
+    Her gün GitHub Action ile otomatik yenilenir.
+    <a href="https://github.com/selim-nba/fiba2027-calendar" target="_blank" rel="noopener">Kaynak repo</a>.
+  </div>
+</div>
+
+<script>
+const base = location.origin + location.pathname.replace(/index\.html$/, "");
+document.getElementById("u1").textContent = base + "turkiye.ics";
+document.getElementById("u2").textContent = base + "worldcup.ics";
+
+function copy(id, btn){
+  navigator.clipboard.writeText(document.getElementById(id).textContent).then(()=>{
+    btn.textContent="Kopyalandı ✓"; btn.classList.add("ok");
+    setTimeout(()=>{btn.textContent="Kopyala"; btn.classList.remove("ok");},1600);
+  });
+}
+
+// Parse the Türkiye ICS client-side, show next match + live countdown.
+function parseIcs(text){
+  const evs=[]; const blocks=text.split("BEGIN:VEVENT");
+  for(let i=1;i<blocks.length;i++){
+    const b=blocks[i].split("END:VEVENT")[0];
+    const get=k=>{const m=b.match(new RegExp(k+":([^\r\n]+)"));return m?m[1].trim():"";};
+    const sum=get("SUMMARY");
+    const dt=get("DTSTART");
+    let d=null;
+    if(/T\d{6}Z$/.test(dt)) d=new Date(Date.UTC(+dt.slice(0,4),+dt.slice(4,6)-1,+dt.slice(6,8),+dt.slice(9,11),+dt.slice(11,13)));
+    else if(/^\d{8}$/.test(dt)) d=new Date(Date.UTC(+dt.slice(0,4),+dt.slice(4,6)-1,+dt.slice(6,8)));
+    const locm=b.match(/LOCATION:([^\r\n]+)/); const loc=locm?locm[1].replace(/\\,/g,",").trim():"";
+    const descm=b.match(/DESCRIPTION:([^\r\n]+)/); let desc=descm?descm[1]:"";
+    desc=desc.replace(/\\n/g," · ").replace(/\\,/g,",").replace(/\\;/g,";");
+    evs.push({sum, d, loc, desc});
+  }
+  return evs;
+}
+fetch(base+"turkiye.ics").then(r=>r.text()).then(t=>{
+  const evs=parseIcs(t);
+  const now=Date.now();
+  const up=evs.filter(e=>e.d && e.d.getTime()>=now).sort((a,b)=>a.d-b.d);
+  const e=up[0];
+  if(!e){document.getElementById("who").textContent="Planlanmış maç yok (fikstür bekleniyor)";return;}
+  document.getElementById("who").innerHTML=e.sum.replace(/🏀/,"");
+  const when=e.d.toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  const time=e.d.toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+  document.getElementById("meta").textContent=when+" · "+time+" (İstanbul)"+(e.loc?" · "+e.loc:"");
+  const tick=()=>{
+    const diff=e.d.getTime()-Date.now();
+    if(diff<=0){document.getElementById("cd").textContent="Maç başladı / oynanıyor";return;}
+    const d=Math.floor(diff/86400000), h=Math.floor(diff/3600000)%24,
+          m=Math.floor(diff/60000)%60, s=Math.floor(diff/1000)%60;
+    document.getElementById("cd").textContent=(d>0?d+"g ":"")+String(h).padStart(2,"0")+":"+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")+" kaldı";
+  };
+  tick(); setInterval(tick,1000);
+}).catch(()=>{document.getElementById("who").textContent="Maç bilgisi yüklenemedi";});
+</script>
+</body>
+</html>
