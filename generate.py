@@ -69,12 +69,44 @@ TR = {
  'Jordan':'Ürdün','Lebanon':'Lübnan','Mexico':'Meksika','Montenegro':'Karadağ','South Sudan':'Güney Sudan',
  'Tunisia':'Tunus','Venezuela':'Venezuela','Angola':'Angola',
 }
+
+# Country name -> ISO 3166-1 alpha-2 (for flag emoji); English names as found in Wikipedia id fields
+NAME_ISO = {
+ 'Austria':'AT','Belgium':'BE','Bosnia and Herzegovina':'BA','Croatia':'HR','Cyprus':'CY',
+ 'Czech Republic':'CZ','Denmark':'DK','Estonia':'EE','Finland':'FI','France':'FR','Georgia':'GE',
+ 'Germany':'DE','Great Britain':'GB','Greece':'GR','Hungary':'HU','Iceland':'IS','Israel':'IL',
+ 'Italy':'IT','Latvia':'LV','Lithuania':'LT','Montenegro':'ME','Netherlands':'NL','Poland':'PL',
+ 'Portugal':'PT','Romania':'RO','Serbia':'RS','Slovenia':'SI','Spain':'ES','Sweden':'SE',
+ 'Switzerland':'CH','Swizerland':'CH','Turkey':'TR','Ukraine':'UA','Qatar':'QA','United States':'US',
+ 'USA':'US','Argentina':'AR','Australia':'AU','Brazil':'BR','Canada':'CA','China':'CN','Egypt':'EG',
+ 'Iran':'IR','Japan':'JP','Mexico':'MX','New Zealand':'NZ','Nigeria':'NG','Philippines':'PH',
+ 'Puerto Rico':'PR','Senegal':'SN','South Sudan':'SS','Angola':'AO','Cape Verde':'CV',
+ 'Dominican Republic':'DO','Ivory Coast':'CI','Jordan':'JO','Lebanon':'LB','Tunisia':'TN',
+ 'Venezuela':'VE',
+}
+def flag(name):
+    iso = NAME_ISO.get(name)
+    if not iso or len(iso) != 2:
+        return ""
+    return chr(0x1F1E6 + (ord(iso[0]) - ord('A'))) + chr(0x1F1E6 + (ord(iso[1]) - ord('A')))
+def flag_matchup(idstr):
+    """Return 'flagA flagB' for an id like 'Turkey v Spain'."""
+    if ' v ' not in idstr:
+        return ''
+    a, b = idstr.split(' v ', 1)
+    return flag(a.strip()) + ' ' + flag(b.strip())
 def tr(n): return TR.get(n, n)
 def tr_matchup(s):
     if " v " in s:
         a, b = s.split(" v ", 1)
         return f"{tr(a.strip())} - {tr(b.strip())}"
     return s
+def tr_matchup_flag(idstr):
+    if ' v ' not in idstr:
+        return idstr
+    a, b = idstr.split(' v ', 1); a=a.strip(); b=b.strip()
+    return f"{flag(a)} {tr(a)} - {flag(b)} {tr(b)}"
+
 def esc(s): return str(s).replace("\\","\\\\").replace("\n","\\n").replace(",","\\,").replace(";","\\;")
 
 # ---------- parser ----------
@@ -151,13 +183,13 @@ def build_ics(matches, path, calname, caldesc):
         if is_ph:
             summary = f"🏀 FIBA 2027 · {rnd or 'Maç'} · Grup {grp}"
         else:
-            summary = f"🏀 {tr_matchup(m['id'])} · Grup {grp}"
+            summary = f"🏀 {tr_matchup_flag(m['id'])} · Grup {grp}"
             if played: summary += f"  {m['scoreA']}-{m['scoreB']}"
         dp = [caldesc]
         if rnd: dp.append(f"Tur: {rnd}")
         dp.append(f"Grup: {grp}")
         if not is_ph:
-            dp.append(f"Maç: {tr_matchup(m['id'])}" + (f"  {m['scoreA']}-{m['scoreB']} (oynandı)" if played else ""))
+            dp.append(f"Maç: {tr_matchup_flag(m['id'])}" + (f"  {m['scoreA']}-{m['scoreB']} (oynandı)" if played else ""))
         if m["arena"]: dp.append(f"Salon: {m['arena']}")
         if city: dp.append(f"Şehir: {city}")
         if has_time:
