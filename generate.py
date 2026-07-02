@@ -405,7 +405,7 @@ document.getElementById("u2").textContent = base + "worldcup.ics";
 function wireCal(n, file){
   const https = base + file;
   const webcal = https.replace(/^https?:\/\//, "webcal://");
-  document.getElementById("g"+n).href = "https://calendar.google.com/calendar?cid=" + encodeURIComponent(https);
+  document.getElementById("g"+n).href = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(webcal);
   document.getElementById("a"+n).href = webcal;
   document.getElementById("o"+n).href = webcal;
   document.getElementById("d"+n).href = https;
