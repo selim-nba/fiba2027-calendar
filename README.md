@@ -1,40 +1,58 @@
-# FIBA 2027 Takvim Aboneliği
+# FIBA 2027 — Türkiye A Milli Takımı Takvim Aboneliği
 
-Wikipedia (FIBA kaynaklı) verisinden her gün otomatik üretilen `.ics` takvimler.
-GitHub Actions günlük çalışır, maçlar/tarihler netleştikçe takvim kendini günceller —
-sen bir şey yapmazsın, abone olduğun takvim Google Calendar'da otomatik yenilenir.
+Wikipedia (FIBA kaynaklı) verisinden **her gün otomatik** üretilen `.ics` takvimler.
+GitHub Actions günlük çalışır; fikstür/tarih/saat netleştikçe takvim kendini günceller.
+Sen bir kere abone olursun, gerisi otomatik — yeni maçlar ekstra iş olmadan takvimine düşer.
+
+🌐 **Açılış sayfası:** <https://selim-nba.github.io/fiba2027-calendar/>
 
 ## Takvimler
 
-| Takvim | İçerik |
-|---|---|
-| `turkiye.ics` | Türkiye A Milli Takımı'nın **tüm** maçları: Avrupa Elemeleri + Dünya Kupası (fikstür yayınlandıkça) |
-| `worldcup.ics` | 2027 FIBA Dünya Kupası turnuva maçları (fikstür yayınlandıkça dolar) |
+| Dosya | İçerik | Abone URL |
+|---|---|---|
+| `turkiye.ics` | Türkiye A Milli Takımı'nın **tüm** maçları: Avrupa Elemeleri + Dünya Kupası | `webcal://selim-nba.github.io/fiba2027-calendar/turkiye.ics` |
+| `worldcup.ics` | 2027 FIBA Dünya Kupası — tüm turnuva maçları | `webcal://selim-nba.github.io/fiba2027-calendar/worldcup.ics` |
 
-## Google Calendar'a abone ol
+Açılış sayfasında tek tıkla ekleme butonları var: 📅 Google · 🍎 Apple Takvim · 🟦 Outlook · ⬇️ .ics indir,
+artıca en üstte 📤 **Paylaş** ve sayfada **sıradaki maç + canlı geri sayım** widget'ı.
 
-1. calendar.google.com → Dişli ⚙ → Ayarlar → **Takvim ekle** → **URL'den**
-2. Aşağıdaki adresten birini yapıştır:
+## Abone ol
 
-```
-https://selim-nba.github.io/fiba2027-calendar/turkiye.ics
-https://selim-nba.github.io/fiba2027-calendar/worldcup.ics
-```
+**Tek tık (önerilen):** açılış sayfasındaki butonlar.
 
-> Google abone takvimleri birkaç saatte bir yeniler. Daha hızlı istersen tek tek
-> "Senkronize et" diyebilirsin; veya telefon uygulamasında yenile.
+**Elle:**
+- **Google Calendar:** Ayarlar → Takvim ekle → URL'den → `webcal://selim-nba.github.io/fiba2027-calendar/turkiye.ics`
+- **Apple Takvim:** yukarıdaki `webcal://` linkine tıkla (Takvim uygulaması abone eder).
+- **Outlook:** Takvim ekle → Web'den abone ol → `https://selim-nba.github.io/fiba2027-calendar/turkiye.ics`
 
-## Notlar
+> Abonelik (URL) kullandığında takvim otomatik güncellenir. `.ics indir` ise tek seferlik import'tur (güncellemez).
 
-- Saatler maçın oynandığı salonun yerel saatine göre UTC'ye çevrilir; takvimde
-  İstanbul saatinde gösterilir (yaz/kış saati otomatik).
-- Elemeler 2. tur maçları (Türkiye gruptan çıkarsa) ve Dünya Kupası fikstürü
-  henüz belli değil; Wikipedia'ya düştükçe Action otomatik ekler.
-- Tek seferlik static import yerine **abonelik (URL)** kullandığımız için sonradan
-  belli olacak maçlar ekstra iş olmadan takvimde görünür.
+## Nasıl çalışıyor
+
+1. **Veri kaynağı:** İngilizce Wikipedia MediaWiki API'si (FIBA kaynaklı):
+   - `2027 FIBA Basketball World Cup qualification (Europe)`
+   - `2027 FIBA Basketball World Cup`
+2. **Ayrıştırma:** regex ile `{{basketballbox collapsible|...}}` şablonlarından tarih/saat/takım/salon/FIBA-id çıkarılır (LLM/eval yok — saf deterministik kod).
+3. **Dönüşüm:** yerel salon saat dilimi → UTC → ICS; Türkçe takım adları + bayrak emojisi eklenir.
+4. **Yayın:** `docs/*.ics` GitHub Pages'ten `text/calendar` olarak sunulur.
+5. **Zamanlama:** `.github/workflows/update-calendar.yml` her gün (cron) + `main`'e push'ta çalışır.
+
+`turkiye.ics` her iki makaledeki "Turkey" maçlarını birleştirir; 2. tur / Dünya Kupası fikstürü Wikipedia'ya düştüğü gün otomatik eklenir.
+
+## Güvenlik / sağlamlık
+
+- GitHub Action'ları commit SHA'larına sabitlendi (tedarik zinciri). Dependabot güncel tutar (`.github/dependabot.yml`).
+- Workflow izinleri minimum (`contents: write`); `pull_request` tetikleyicisi yok; repo'da secret yok.
+- Açılış sayfasında XSS sink yok (`innerHTML`/`eval`/`document.write` = 0); ICS değer kaçışı CR dahil sağlamlaştırıldı.
+- Fetch hatasında eski ICS silinmez: Wikipedia geçici kapalıysa son iyi dosya korunur, Action kırmızı vermez.
 
 ## Yerel çalıştırma
 
 ```bash
-python3 generate.py      # calendar/*.ics üretir
+python3 generate.py        # docs/*.ics + docs/index.html üretir (sadece stdlib)
 ```
+
+## Kredi
+
+Yapan: [Selim Yoruk](https://www.linkedin.com/in/selimyoruk/) 🇹🇷
+Veri kaynağı: [Wikipedia / FIBA](https://en.wikipedia.org/wiki/2027_FIBA_Basketball_World_Cup_qualification_(Europe))
