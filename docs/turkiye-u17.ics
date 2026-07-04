@@ -1,0 +1,69 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//FIBA 2027 Calendar//TR//
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:FIBA U17 Dünya Kupası 2026 - Türkiye U17
+X-WR-TIMEZONE:Europe/Istanbul
+X-WR-CALDESC:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)
+BEGIN:VEVENT
+UID:fiba2027-114423@selim-nba
+DTSTART:20260627T171500Z
+DTEND:20260627T193000Z
+SUMMARY:🏀 🇳🇿 Yeni Zelanda - 🇹🇷 Türkiye · Grup C  100-112
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Group Phase\nGrup: C\nMaç: 🇳🇿 Yeni Zelanda - 🇹🇷 Türkiye  100-112 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 20:15 (Europe/Istanbul)\nBaşlangıç (İstanbul): 20:15\nFIBA: https://www.fiba.basketball/en/games/114423
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-114422@selim-nba
+DTSTART:20260628T171500Z
+DTEND:20260628T193000Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇸🇮 Slovenya · Grup C  87-66
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Group Phase\nGrup: C\nMaç: 🇹🇷 Türkiye - 🇸🇮 Slovenya  87-66 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 20:15 (Europe/Istanbul)\nBaşlangıç (İstanbul): 20:15\nFIBA: https://www.fiba.basketball/en/games/114422
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-114421@selim-nba
+DTSTART:20260630T171500Z
+DTEND:20260630T193000Z
+SUMMARY:🏀 🇵🇷 Porto Riko - 🇹🇷 Türkiye · Grup C  77-98
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Group Phase\nGrup: C\nMaç: 🇵🇷 Porto Riko - 🇹🇷 Türkiye  77-98 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 20:15 (Europe/Istanbul)\nBaşlangıç (İstanbul): 20:15\nFIBA: https://www.fiba.basketball/en/games/114421
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-132924@selim-nba
+DTSTART:20260701T171500Z
+DTEND:20260701T193000Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇻🇪 Venezuela · Grup 29  78-73
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Round of 16\nGrup: 29\nMaç: 🇹🇷 Türkiye - 🇻🇪 Venezuela  78-73 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 20:15 (Europe/Istanbul)\nBaşlangıç (İstanbul): 20:15\nFIBA: https://www.fiba.basketball/en/games/132924
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-132932@selim-nba
+DTSTART:20260703T174500Z
+DTEND:20260703T200000Z
+SUMMARY:🏀 🇫🇷 Fransa - 🇹🇷 Türkiye · Grup 38  87-94
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Quarter-Finals\nGrup: 38\nMaç: 🇫🇷 Fransa - 🇹🇷 Türkiye  87-94 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 20:45 (Europe/Istanbul)\nBaşlangıç (İstanbul): 20:45\nFIBA: https://www.fiba.basketball/en/games/132932
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-132943@selim-nba
+DTSTART:20260704T180000Z
+DTEND:20260704T201500Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇷🇸 Sırbistan · Grup 48
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Semi-Finals\nGrup: 48\nMaç: 🇹🇷 Türkiye - 🇷🇸 Sırbistan\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 21:00 (Europe/Istanbul)\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/132943
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

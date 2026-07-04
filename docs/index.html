@@ -104,6 +104,20 @@
         <a class="btn" id="d2" download>⬇️ .ics indir</a>
       </div>
     </div>
+    <div class="cal">
+      <div class="name">🏀 Türkiye U17 — 2026 U17 Dünya Kupası</div>
+      <div class="desc">Türkiye U17 Milli Takımı'nın 2026 FIBA U17 Dünya Kupası (İstanbul) maçları. Otomatik güncellenir.</div>
+      <div class="urlrow">
+        <code id="u3"></code>
+        <button onclick="copy('u3',this)">Kopyala</button>
+      </div>
+      <div class="btns">
+        <a class="btn" id="g3" target="_blank" rel="noopener">📅 Google Takvim</a>
+        <a class="btn" id="a3">🍎 Apple Takvim</a>
+        <a class="btn" id="o3" target="_blank" rel="noopener">🟦 Outlook</a>
+        <a class="btn" id="d3" download>⬇️ .ics indir</a>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -128,6 +142,7 @@
 const base = location.origin + location.pathname.replace(/index\.html$/, "");
 document.getElementById("u1").textContent = base + "turkiye.ics";
 document.getElementById("u2").textContent = base + "worldcup.ics";
+document.getElementById("u3").textContent = base + "turkiye-u17.ics";
 
 function wireCal(n, file){
   const https = base + file;
@@ -145,6 +160,7 @@ function wireCal(n, file){
 }
 wireCal(1, "turkiye.ics");
 wireCal(2, "worldcup.ics");
+wireCal(3, "turkiye-u17.ics");
 
 const shareBtn = document.getElementById("shareBtn");
 const shareData = {

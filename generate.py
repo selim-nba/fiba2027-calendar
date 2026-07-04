@@ -17,6 +17,8 @@ IST = ZoneInfo("Europe/Istanbul")
 UA = "Mozilla/5.0 (compatible: fiba2027-calendar-bot/1.0; +https://github.com/selim-nba/fiba2027-calendar)"
 EQ_SLUG = "fiba-basketball-world-cup-2027-european-qualifiers"
 WC_SLUG = "fiba-basketball-world-cup-2027"
+# U17 Basketball World Cup (youth national team).
+U17_WC_SLUG = "fiba-u17-basketball-world-cup-2026"
 
 # ---------- FIBA team code -> ISO 3166-1 alpha-2 (for flag emoji) ----------
 # FIBA uses IOC-ish codes that differ from ISO for several countries.
@@ -32,7 +34,7 @@ FIBA_CODE_ISO = {
  "JPN":"JP","MEX":"MX","NZL":"NZ","NGA":"NG","PHI":"PH","PUR":"PR","SEN":"SN","SSD":"SS",
  "ANG":"AO","CPV":"CV","DOM":"DO","CIV":"CI","JOR":"JO","LBN":"LB","TUN":"TN","VEN":"VE",
  "QAT":"QA","KOR":"KR","TPE":"TW","COL":"CO","URU":"UY","PAR":"PY","CHI":"CL","MAS":"MY",
- "JOR":"JO",
+ "JOR":"JO","CMR":"CM",
 }
 # ---------- FIBA shortName (English) -> Turkish ----------
 TR_NAMES = {
@@ -52,7 +54,7 @@ TR_NAMES = {
  "Dominican Republic":"Dominik Cumhuriyeti","Ivory Coast":"Fildişi Sahili","Jordan":"Ürdün",
  "Lebanon":"Lübnan","Tunisia":"Tunus","Venezuela":"Venezuela","Qatar":"Katar","South Korea":"Güney Kore",
  "Chinese Taipei":"Çin Taipei","Colombia":"Kolombiya","Uruguay":"Uruguay","Paraguay":"Paraguay",
- "Chile":"Şili","Malaysia":"Malezya",
+ "Chile":"Şili","Malaysia":"Malezya","Cameroon":"Kamerun",
 }
 ROUND_TR = {"1st Round":"1. Tur","2nd Round":"2. Tur","3rd Round":"3. Tur","4th Round":"4. Tur"}
 
@@ -235,6 +237,19 @@ def main():
     else:
         print("  ~ worldcup.ics: no WC fixtures published yet; kept last-good file")
 
+    # Türkiye U17 national team calendar (FIBA U17 Basketball World Cup).
+    u17_html = fetch_fiba_html(U17_WC_SLUG)
+    u17 = parse_fiba_games(u17_html)
+    print(f"  U17 World Cup: {len(u17)} games parsed")
+    if u17:
+        tur_u17 = [g for g in u17 if g["ca"] == "TUR" or g["cb"] == "TUR"]
+        n3 = write_if_better(os.path.join(OUTDIR, "turkiye-u17.ics"), tur_u17,
+                             "FIBA U17 Dünya Kupası 2026 - Türkiye U17",
+                             "FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)")
+        print(f"  turkiye-u17.ics: {n3} events (Türkiye U17: {len(tur_u17)})")
+    else:
+        print("  ~ turkiye-u17.ics: U17 fetch failed; kept last-good file")
+
     html = r"""<!doctype html>
 <html lang="tr">
 <head>
@@ -341,6 +356,20 @@ def main():
         <a class="btn" id="d2" download>⬇️ .ics indir</a>
       </div>
     </div>
+    <div class="cal">
+      <div class="name">🏀 Türkiye U17 — 2026 U17 Dünya Kupası</div>
+      <div class="desc">Türkiye U17 Milli Takımı'nın 2026 FIBA U17 Dünya Kupası (İstanbul) maçları. Otomatik güncellenir.</div>
+      <div class="urlrow">
+        <code id="u3"></code>
+        <button onclick="copy('u3',this)">Kopyala</button>
+      </div>
+      <div class="btns">
+        <a class="btn" id="g3" target="_blank" rel="noopener">📅 Google Takvim</a>
+        <a class="btn" id="a3">🍎 Apple Takvim</a>
+        <a class="btn" id="o3" target="_blank" rel="noopener">🟦 Outlook</a>
+        <a class="btn" id="d3" download>⬇️ .ics indir</a>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -365,6 +394,7 @@ def main():
 const base = location.origin + location.pathname.replace(/index\.html$/, "");
 document.getElementById("u1").textContent = base + "turkiye.ics";
 document.getElementById("u2").textContent = base + "worldcup.ics";
+document.getElementById("u3").textContent = base + "turkiye-u17.ics";
 
 function wireCal(n, file){
   const https = base + file;
@@ -382,6 +412,7 @@ function wireCal(n, file){
 }
 wireCal(1, "turkiye.ics");
 wireCal(2, "worldcup.ics");
+wireCal(3, "turkiye-u17.ics");
 
 const shareBtn = document.getElementById("shareBtn");
 const shareData = {

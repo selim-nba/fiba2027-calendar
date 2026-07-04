@@ -12,6 +12,7 @@ Sen bir kere abone olursun, gerisi otomatik — yeni maçlar ekstra iş olmadan 
 |---|---|---|
 | `turkiye.ics` | Türkiye A Milli Takımı'nın **tüm** maçları: Avrupa Elemeleri + Dünya Kupası | `webcal://selim-nba.github.io/fiba2027-calendar/turkiye.ics` |
 | `worldcup.ics` | 2027 FIBA Dünya Kupası — tüm turnuva maçları | `webcal://selim-nba.github.io/fiba2027-calendar/worldcup.ics` |
+| `turkiye-u17.ics` | Türkiye **U17** Milli Takımı — 2026 FIBA U17 Dünya Kupası (İstanbul) maçları | `webcal://selim-nba.github.io/fiba2027-calendar/turkiye-u17.ics` |
 
 Açılış sayfasında tek tıkla ekleme butonları var: 📅 Google · 🍎 Apple Takvim · 🟦 Outlook · ⬇️ .ics indir,
 artıca en üstte 📤 **Paylaş** ve sayfada **sıradaki maç + canlı geri sayım** widget'ı.
