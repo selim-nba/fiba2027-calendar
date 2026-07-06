@@ -60,8 +60,18 @@ BEGIN:VEVENT
 UID:fiba2027-132943@selim-nba
 DTSTART:20260704T180000Z
 DTEND:20260704T201500Z
-SUMMARY:🏀 🇹🇷 Türkiye - 🇷🇸 Sırbistan · Grup 48
-DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Semi-Finals\nGrup: 48\nMaç: 🇹🇷 Türkiye - 🇷🇸 Sırbistan\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 21:00 (Europe/Istanbul)\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/132943
+SUMMARY:🏀 🇹🇷 Türkiye - 🇷🇸 Sırbistan · Grup 48  71-76
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: Semi-Finals\nGrup: 48\nMaç: 🇹🇷 Türkiye - 🇷🇸 Sırbistan  71-76 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 21:00 (Europe/Istanbul)\nBaşlangıç (İstanbul): 21:00\nFIBA: https://www.fiba.basketball/en/games/132943
+LOCATION:BDC Main Venue\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-132948@selim-nba
+DTSTART:20260705T141500Z
+DTEND:20260705T163000Z
+SUMMARY:🏀 🇦🇺 Avustralya - 🇹🇷 Türkiye · Grup 55  77-69
+DESCRIPTION:FIBA U17 Dünya Kupası 2026 Türkiye U17 Milli Takımı maçları (otomatik güncellenir)\nTur: 3rd Place Game\nGrup: 55\nMaç: 🇦🇺 Avustralya - 🇹🇷 Türkiye  77-69 (oynandı)\nSalon: BDC Main Venue\nŞehir: Istanbul\nBaşlangıç (yerel): 17:15 (Europe/Istanbul)\nBaşlangıç (İstanbul): 17:15\nFIBA: https://www.fiba.basketball/en/games/132948
 LOCATION:BDC Main Venue\, Istanbul
 STATUS:CONFIRMED
 TRANSP:OPAQUE
