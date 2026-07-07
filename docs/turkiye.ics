@@ -60,9 +60,63 @@ BEGIN:VEVENT
 UID:fiba2027-127013@selim-nba
 DTSTART:20260706T160000Z
 DTEND:20260706T181500Z
-SUMMARY:🏀 🇹🇷 Türkiye - 🇨🇭 İsviçre · Grup C
-DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: 🇹🇷 Türkiye - 🇨🇭 İsviçre\nSalon: Sinan Erdem Dome\nŞehir: Istanbul\nBaşlangıç (yerel): 19:00 (Europe/Istanbul)\nBaşlangıç (İstanbul): 19:00\nFIBA: https://www.fiba.basketball/en/games/127013
+SUMMARY:🏀 🇹🇷 Türkiye - 🇨🇭 İsviçre · Grup C  95-72
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 1. Tur\nGrup: C\nMaç: 🇹🇷 Türkiye - 🇨🇭 İsviçre  95-72 (oynandı)\nSalon: Sinan Erdem Dome\nŞehir: Istanbul\nBaşlangıç (yerel): 19:00 (Europe/Istanbul)\nBaşlangıç (İstanbul): 19:00\nFIBA: https://www.fiba.basketball/en/games/127013
 LOCATION:Sinan Erdem Dome\, Istanbul
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127134@selim-nba
+DTSTART:20260828T000000Z
+DTEND:20260828T021500Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇱🇹 Litvanya · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇹🇷 Türkiye - 🇱🇹 Litvanya\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127134
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127137@selim-nba
+DTSTART:20260831T000000Z
+DTEND:20260831T021500Z
+SUMMARY:🏀 🇮🇸 İzlanda - 🇹🇷 Türkiye · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇮🇸 İzlanda - 🇹🇷 Türkiye\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127137
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127140@selim-nba
+DTSTART:20261126T000000Z
+DTEND:20261126T021500Z
+SUMMARY:🏀 🇮🇹 İtalya - 🇹🇷 Türkiye · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇮🇹 İtalya - 🇹🇷 Türkiye\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127140
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127150@selim-nba
+DTSTART:20261129T000000Z
+DTEND:20261129T021500Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇮🇸 İzlanda · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇹🇷 Türkiye - 🇮🇸 İzlanda\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127150
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127146@selim-nba
+DTSTART:20270226T000000Z
+DTEND:20270226T021500Z
+SUMMARY:🏀 🇱🇹 Litvanya - 🇹🇷 Türkiye · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇱🇹 Litvanya - 🇹🇷 Türkiye\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127146
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+UID:fiba2027-127149@selim-nba
+DTSTART:20270301T000000Z
+DTEND:20270301T021500Z
+SUMMARY:🏀 🇹🇷 Türkiye - 🇮🇹 İtalya · Grup J
+DESCRIPTION:FIBA 2027 Türkiye A Milli Takımı maçları: Avrupa Elemeleri + Dünya Kupası (otomatik güncellenir)\nTur: 2. Tur\nGrup: J\nMaç: 🇹🇷 Türkiye - 🇮🇹 İtalya\nBaşlangıç (İstanbul): 03:00\nFIBA: https://www.fiba.basketball/en/games/127149
 STATUS:CONFIRMED
 TRANSP:OPAQUE
 END:VEVENT
